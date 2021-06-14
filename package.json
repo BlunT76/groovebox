@@ -1,0 +1,46 @@
+{
+  "name": "imp-groovebox",
+  "version": "0.0.1",
+  "description": "an attempt to make a virtual groovebox",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Philippe Pereira <ppereira.ext@simplon.co>",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+  "scripts": {
+    "build": "webpack --config webpack/prod.js ",
+    "start": "webpack-dev-server --config webpack/base.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-react": "^7.13.13",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "file-loader": "^4.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^3.1.0",
+    "terser-webpack-plugin": "^2.2.1",
+    "ts-lint": "^4.5.1",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.9.7",
+    "web-audio-peak-meter": "^2.1.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^4.2.2",
+    "worker-loader": "^3.0.8"
+  },
+  "dependencies": {
+    "freeverb": "^1.1.2",
+    "localforage": "^1.9.0",
+    "preact": "^10.5.13",
+    "preact-render-to-string": "^5.1.19",
+    "react-circular-slider-svg": "^0.1.5",
+    "webmidi": "^2.5.2"
+  }
+}

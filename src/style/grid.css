@@ -1,0 +1,34 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 4px 4px;
+    grid-template-areas:
+      "master master master master master master lcd lcd lcd lcd lcd lcd"
+      "drum synth synth track track track trackfx trackfx trackfx trackfx trackfx trackfx"
+      "preset synth synth track track track trackfx trackfx trackfx trackfx trackfx trackfx"
+      "transport transport transport transport transport transport transport transport transport transport transport transport"
+      "btn1to8 btn1to8 btn1to8 btn1to8 btn1to8 btn1to8 btn1to8 btn1to8 btn1to8 btn1to8 btn1to8 btn1to8"
+      "btn9to16 btn9to16 btn9to16 btn9to16 btn9to16 btn9to16 btn9to16 btn9to16 btn9to16 btn9to16 btn9to16 btn9to16";
+}
+  
+  .master { grid-area: master; }
+  
+  .lcd { grid-area: lcd; }
+  
+  .drum { grid-area: drum; }
+  
+  .preset { grid-area: preset; }
+  
+  .synth { grid-area: synth; }
+  
+  .track { grid-area: track; }
+  
+  .trackfx { grid-area: trackfx; }
+  
+  .transport { grid-area: transport; }
+  
+  .btn1to8 { grid-area: btn1to8; }
+  
+  .btn9to16 { grid-area: btn9to16; }
+  

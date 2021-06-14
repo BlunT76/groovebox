@@ -1,0 +1,18 @@
+export const TRACK_NAMES = [
+    'BD',
+    'SD',
+    'TL',
+    'TM',
+    'TH',
+    'CH',
+    'OH',
+    'CY',
+    'SY1',
+    'SY2',
+    'SY3',
+    'SY4',
+    'SY5',
+    'SY6',
+    'SY7',
+    'SY8',
+]

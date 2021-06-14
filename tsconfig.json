@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "h",
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "lib": ["es2015", "webworker"],
+    "target": "es6",
+    "allowJs": true,
+    "skipLibCheck": true,
+  }
+}
