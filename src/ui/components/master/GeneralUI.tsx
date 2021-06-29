@@ -25,6 +25,8 @@ export default class GeneralUI extends PureComponent<ExpandableProps, Expandable
         this.state = {
             active: false
         };
+
+        this.setMidiLearn = this.setMidiLearn.bind(this);
     }
 
     turnGrooveBoxOn ()
@@ -48,6 +50,13 @@ export default class GeneralUI extends PureComponent<ExpandableProps, Expandable
     {
         console.log(elm.currentTarget.value)
         this.props.midi.setMidiInput(elm.currentTarget.value);
+    }
+
+    setMidiLearn ()
+    {
+        const { isLearning } = this.props.grooveBox.ccHandler;
+
+        this.props.grooveBox.ccHandler.setMidiLearn(!isLearning)
     }
 
     render ()
@@ -82,6 +91,8 @@ export default class GeneralUI extends PureComponent<ExpandableProps, Expandable
                     <select style={midiSelectStyle} onClick={(e) => this.selectInput(e)}>
                         {this.props.midiInputs?.map(elm => <option value={elm}>{elm}</option>)}
                     </select>
+
+                    {/* <button style={btnStyle} name="type" value='0' onClick={this.setMidiLearn}>Midi Learn</button> */}
 
                     {/* <div style={meterStyle}>
                     <VumeterUI grooveBox={this.props.grooveBox} />
@@ -155,8 +166,10 @@ const powerIconStyle = {
 const midiSelectStyle = {
     position: 'absolute',
     top: '8px',
-    left: '54px',
-    'border': '3px solid var(--MALIBU)',
+    left: '54px', // '140px',
+    height: '21',
+    'background-color': 'var(--HAWKES_BLUE)',
+    'border': '2px solid var(--MALIBU)',
     'border-radius': '6px'
 }
 
@@ -164,4 +177,15 @@ const meterStyle = {
     position: 'absolute',
     top: '-13px',
     left: '512px',
+}
+
+const btnStyle = {
+    position: 'absolute',
+    top: '6px',
+    left: '54px',
+    width: '80',
+    height: '21',
+    'background-color': 'var(--HAWKES_BLUE)',
+    border: '2px solid var(--MALIBU)',
+    'border-radius': '6px',
 }

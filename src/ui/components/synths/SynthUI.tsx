@@ -61,13 +61,9 @@ export default class SynthUI extends Component<ExpandableProps, ExpandableState>
     {
         const { track, grooveBox } = this.props;
 
-        track.analogSynthParams.whiteNoiseGain = value;
-
-        this.props.func(track);
-
         if (track.id > 7)
         {
-            grooveBox.synthTracks[track.id - 8].setNoise();
+            grooveBox.synthTracks[track.id - 8].setNoise(value);
         }
     }
 

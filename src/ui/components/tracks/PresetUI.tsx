@@ -3,7 +3,6 @@ import { h, Component, render, Fragment } from "preact";
 import GrooveBox from "../../../audio/GrooveBox";
 import Track from "../../../data/Track";
 import { IPreset } from "../../../models/IPreset";
-import { ITrackPreset } from "../../../models/ITrackPreset";
 import { SampleSelector } from "../drums/SampleSelector";
 import KnobUI from "../utils/KnobUI";
 

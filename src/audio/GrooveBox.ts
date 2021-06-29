@@ -1,6 +1,6 @@
 import Note from "./Note";
 import { EMode } from "../constant/EMode";
-import { T16range } from "../types/types";
+import { T16range, TOctave } from "../types/types";
 import Song from "../data/Song";
 import Track from "../data/Track";
 import MonoSynth from "./synths/MonoSynth";
@@ -9,6 +9,8 @@ import DrumTrack from "./drums/DrumTrack";
 import localforage = require("localforage");
 import { SAMPLES } from "../constant/SAMPLES";
 import { ECopySourceType } from "../constant/ECopySourceType";
+import { InputEventControlchange } from "webmidi";
+import ControlChange, { TCc } from "../data/ControlChange";
 
 
 export default class GrooveBox
@@ -32,7 +34,7 @@ export default class GrooveBox
     public selectingPattern: boolean = false;
     public selectingTrack: boolean = false;
     public selectingBar: boolean = false;
-    public octave: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 3;
+    public octave: TOctave = 3;
     public muteTrackMode: boolean = false;
 
     // samples
@@ -62,6 +64,7 @@ export default class GrooveBox
     public copySourceType: ECopySourceType = null;
     public isTransposing: boolean;
     public displayData: any[] = [];
+    ccHandler: ControlChange;
 
     constructor (sendEvent: Function)
     {
@@ -70,23 +73,111 @@ export default class GrooveBox
         this.sendEvent = sendEvent;
     }
 
+    checkIsMidiLearning (): boolean
+    {
+        if (this.ccHandler.isWaitingFunction === true)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    getControlChangeEvent (cc: InputEventControlchange)
+    {
+        const id = cc.controller.number;
+        const value = cc.value;
+        if (this.ccHandler.isWaitingCC)
+        {
+            this.ccHandler.midiLearn(id, undefined);
+
+            return;
+        }
+
+        const func = this.ccHandler.ccList[id].func as keyof GrooveBox;
+
+        if (func)
+        {
+            try
+            {
+                this[func](value);
+
+                return;
+            }
+            catch (error)
+            {
+                if (this.selectedTrackId < 8)
+                {
+                    const drumFunc = this.ccHandler.ccList[id].func as keyof DrumTrack;
+
+                    try
+                    {
+                        // @ts-ignore
+                        this.drumTracks[this.selectedTrackId][drumFunc](value);
+
+                        return;
+                    }
+                    catch (error)
+                    {
+                        console.log(error)
+                    }
+                }
+
+                if (this.selectedTrackId > 7)
+                {
+                    const synthFunc = this.ccHandler.ccList[id].func as keyof MonoSynth;
+
+                    try
+                    {
+                        // @ts-ignore
+                        this.synthTracks[this.selectedTrackId - 8][synthFunc](value);
+
+                        return;
+                    }
+                    catch (error)
+                    {
+                        console.log(error)
+                    }
+                }
+
+            }
+        }
+        // else
+        // {
+        //     const synthFunc = this.ccHandler.ccList[id].func as keyof MonoSynth;
+
+        //     try
+        //     {
+        //         // @ts-ignore
+        //         this.synthTracks[this.selectedTrackId - 8][synthFunc](value);
+        //     }
+        //     catch (error)
+        //     {
+        //         console.log(error)
+        //     }
+        // }
+
+
+    }
+
     getBpm (): number
     {
         return this.bpm; // song?.getBpm() || 120;
     }
 
-    setBpm (bpm: number)
+    setBpm (value: number)
     {
+        const bpm = Math.round((value / 127 * 200) + 40);
         this.song.setBpm(bpm);
         this.bpm = this.song.getBpm();
     }
 
     public setMasterGain (gain: number)
     {
-        this.masterGain.gain.setValueAtTime(gain, 0);
+        this.masterGain.gain.setValueAtTime(gain / 127, 0);
     }
 
-    getOctave ()
+    getOctave (): TOctave
     {
         return this.octave;
     }
@@ -176,8 +267,6 @@ export default class GrooveBox
         // create a global gain
         this.masterGain = this.audioCtx.createGain();
         this.masterGain.gain.value = 1;
-        //let dbfs = 20 * Math.log10(8);
-        //console.log(Math.pow(10, -0.1 / 20))
         this.masterGain.connect(this.limiter);
 
         this.limiter.connect(this.audioCtx.destination);
@@ -228,9 +317,28 @@ export default class GrooveBox
             this.drumTracks[i] = drum;
         }
 
+        // init Control Change
+        this.ccHandler = new ControlChange(this);
+        this.loadCcList();
+
         console.log("GrooveBox initialized: ", this)
 
         return true;
+    }
+
+    loadCcList ()
+    {
+        localforage.getItem('ccList').then((ccList: TCc[]) =>
+        {
+            if (ccList)
+            {
+                this.ccHandler.ccList = ccList;
+            }
+            else
+            {
+                localforage.setItem('ccList', this.ccHandler.ccList);
+            }
+        });
     }
 
     setSong (song: Song)
@@ -613,7 +721,6 @@ export default class GrooveBox
                     this.copySource = null;
                     this.copySourceType = null;
                     this.sendEvent({ copyOn: false });
-                    console.log(error);
                 }
             }
 
@@ -668,7 +775,6 @@ export default class GrooveBox
                     this.copySource = null;
                     this.copySourceType = null;
                     this.sendEvent({ copyOn: false });
-                    console.log(error);
                 }
             }
 
@@ -699,7 +805,6 @@ export default class GrooveBox
                     this.copySource = null;
                     this.copySourceType = null;
                     this.sendEvent({ copyOn: false });
-                    console.log(error);
                 }
             }
 
@@ -740,7 +845,6 @@ export default class GrooveBox
                     this.copySource = null;
                     this.copySourceType = null;
                     this.sendEvent({ copyOn: false });
-                    console.log(error)
                 }
             }
 
@@ -823,6 +927,7 @@ export default class GrooveBox
                     notesInSelectedBar.push(currentNote);
 
                     this.isWaitingPitch = true;
+
                     this.sendEvent({ isWaitingPitch: this.isWaitingPitch });
                     this.sendEvent({ 'lcdLine4': { key: 'CHOOSE A NOTE:', value: '' } });
                 }
@@ -848,11 +953,13 @@ export default class GrooveBox
             notesInSelectedBar[length].octave = currentNote.octave;
 
             this.isWaitingPitch = false;
+
             this.sendEvent({ isWaitingPitch: this.isWaitingPitch });
             this.sendEvent({ 'lcdLine4': { key: 'NOTE:', value: currentNote.name + currentNote.octave } });
         }
 
-        this.song.getPattern(selectedPatternId).getTrack(selectedTrackId).bar[selectedBarId].notes = notesInSelectedBar; //.setTracks(newTracks);
+        this.song.getPattern(selectedPatternId).getTrack(selectedTrackId).bar[selectedBarId].notes = notesInSelectedBar;
+
         this.sendEvent({ song: song });
     }
 
@@ -872,17 +979,11 @@ export default class GrooveBox
 
             notesInCurrentBar = newNotesInCurrentBar;
         }
-        // else
-        // {
-        //     // add note
-        //     currentNote.setBeatId(seqId)
-        //     notesInCurrentBar.push(currentNote);
-        // }
+
         if (currentNote.bar === undefined)
         {
             currentNote.bar = currentBarId;
         }
-
     }
 
     transposeUp ()

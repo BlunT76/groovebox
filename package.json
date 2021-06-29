@@ -36,6 +36,7 @@
     "worker-loader": "^3.0.8"
   },
   "dependencies": {
+    "@types/webmidi": "^2.0.4",
     "freeverb": "^1.1.2",
     "localforage": "^1.9.0",
     "preact": "^10.5.13",

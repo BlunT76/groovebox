@@ -184,7 +184,7 @@ export default class DrumTrack
         if (this.vcf.frequency.value.toFixed(3) !== vcf.frequency.toFixed(3))
         {
             this.vcf.frequency.cancelScheduledValues(0);
-            this.vcf.frequency.exponentialRampToValueAtTime(vcf.frequency, now);
+            this.vcf.frequency.exponentialRampToValueAtTime(vcf.frequency + 0.0000000001, now);
 
             this.grooveBox.sendEvent({ 'lcdLine4': { key: 'VCF FREQ:', value: (vcf.frequency).toFixed(0) + ' Hz' } });
         }
@@ -203,14 +203,16 @@ export default class DrumTrack
         }
     }
 
-    setPan ()
+    setPan (value: number)
     {
+        this.track.pan = (value - 63) / 127;
+
         const now = this.getCurrentTime();
         const { pan } = this.track;
 
         this.pan.pan.setValueAtTime(pan, now);
 
-        this.grooveBox.sendEvent({ 'lcdLine4': { key: 'PAN:', value: this.pan.pan.value.toFixed(2) } });
+        this.grooveBox.sendEvent({ 'lcdLine4': { key: 'PAN:', value: (this.pan.pan.value * 25).toFixed(0) } });
     }
 
     setPreset ()

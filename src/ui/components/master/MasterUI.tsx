@@ -20,14 +20,13 @@ export default class MasterUI extends Component<ExpandableProps, ExpandableState
 
     setGain (value: number)
     {
-        this.props.grooveBox.setMasterGain(value / 127);
+        this.props.grooveBox.setMasterGain(value);
         this.props.grooveBox.sendEvent({ grooveBox: this.props.grooveBox });
     }
 
     setBpm (value: number)
     {
-        const val = Math.round((value / 127 * 200) + 40);
-        this.props.grooveBox.setBpm(val);
+        this.props.grooveBox.setBpm(value);
         this.props.grooveBox.sendEvent({ grooveBox: this.props.grooveBox });
     }
 

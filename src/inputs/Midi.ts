@@ -33,7 +33,6 @@ export default class Midi
 
             // @ts-ignore
             this.midiInputs = WebMidi.inputs;
-            console.log(this.midiInputs)
 
             for (let i = 0; i < 9; i++)
             {
@@ -41,10 +40,10 @@ export default class Midi
             }
 
             callback();
-        });
+        }, false);
     }
 
-    getMidiInputs (): any[]
+    getMidiInputs (): WebMidi.Input[]
     {
         return this.midiInputs;
     }
@@ -54,32 +53,43 @@ export default class Midi
         // @ts-ignore
         this.midiInput = WebMidi.getInputByName(deviceName);
 
-        this.midiInput.addListener('noteon', 'all',
-            (e: any) =>
+        // Note on listener
+        this.midiInput.addListener('noteon', 'all', (midiNote: WebMidi.InputEventNoteon) =>
+        {
+            const { currentTrackId, currentBarId, currentBeatId } = this.grooveBoxUi.state;
+
+            const note = new Note(midiNote.note.name, midiNote.note.octave, currentBeatId, midiNote);
+
+            note.beatId = currentBeatId;
+
+            if (currentTrackId < 8)
             {
-                const { currentTrackId, currentBarId, currentBeatId } = this.grooveBoxUi.state;
-                const note = new Note(e.note.name, this.grooveBox.getOctave(), e);
-                //note.startTime = this.grooveBox.audioCtx.currentTime;
-                note.beatId = currentBeatId;
+                note.isFromMidi = true;
 
-                if (currentTrackId < 8)
-                {
-                    note.isFromMidi = true;
-                    this.grooveBox.noteOn(note, currentBeatId);
-                }
-                else
-                {
-                    const { currentBeatId, currentBarId } = this.grooveBoxUi.state;
-                    note.isFromMidi = true;
-
-                    this.pressedKeys += 1;
-                    this.noteStack[e.note.octave][e.note.name] = this.grooveBox.noteOn(note, note.beatId || currentBeatId);
-                }
+                this.grooveBox.noteOn(note, currentBeatId);
             }
+            else
+            {
+                const { currentBeatId, currentBarId } = this.grooveBoxUi.state;
+
+                note.isFromMidi = true;
+
+                this.pressedKeys += 1;
+
+                try {
+                    this.noteStack[midiNote.note.octave][midiNote.note.name] = this.grooveBox.noteOn(note, note.beatId || currentBeatId);
+                }
+                catch (error)
+                {
+                    return;
+                }
+                
+            }
+        }
         );
 
-        this.midiInput.addListener('noteoff', 'all',
-            (e: any) =>
+        // Note off listener
+        this.midiInput.addListener('noteoff', 'all', (midiNote: WebMidi.InputEventNoteoff) =>
             {
                 const { currentTrackId } = this.grooveBoxUi.state;
 
@@ -88,27 +98,27 @@ export default class Midi
                     try
                     {
                         this.pressedKeys -= 1;
+
                         if (this.pressedKeys === 0)
                         {
-                            this.noteStack[e.note.octave][e.note.name].stopMidiNote();
-                            
+                            this.noteStack[midiNote.note.octave][midiNote.note.name].stopMidiNote();
                         }
-                        delete this.noteStack[e.note.octave][e.note.name];
-                        
-                    } catch (error) {
-                        console.log('Note not found', error)
+
+                        delete this.noteStack[midiNote.note.octave][midiNote.note.name];
                     }
-                    
+                    catch (error)
+                    {
+                        return;
+                    }
                 }
             }
         );
 
+        // Control Change listener
         this.midiInput.addListener('controlchange', 'all',
-            (e: any) =>
+            (cc: WebMidi.InputEventControlchange) =>
             {
-                console.log(e.controller, e.value)
-                // (e.value / 127 - 0.5) * 2); // -1 to 1
-                // (e.value / 127); // 0 to 1
+                this.grooveBox.getControlChangeEvent(cc);
             }
         );
 

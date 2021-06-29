@@ -150,7 +150,7 @@ export default class MonoSynth
         {
             delayFx.setOnOff(false);
         }
-        
+
         delayFx.setDelayTime(delay.delayTime);
         delayFx.setFeedback(delay.feedback);
         delayFx.setMix(delay.wetdry);
@@ -246,6 +246,7 @@ export default class MonoSynth
         this.setLfo();
         this.lfo.start(time || 0);
     }
+
     setLfo ()
     {
         const now = this.getCurrentTime();
@@ -328,7 +329,7 @@ export default class MonoSynth
             }
             catch (error)
             {
-                console.log(error)
+
             }
 
         }
@@ -381,28 +382,32 @@ export default class MonoSynth
         }
     }
 
-    setNoise ()
+    setNoise (value: number)
     {
         const now = this.getCurrentTime();
         const { whiteNoiseGain } = this.track.analogSynthParams;
 
-        if (this.whiteNoiseGain.gain.value.toFixed(3) !== (whiteNoiseGain).toFixed(3))
+        this.track.analogSynthParams.whiteNoiseGain = value / 127 / 10;
+
+        if (this.whiteNoiseGain.gain.value.toFixed(3) !== (this.track.analogSynthParams.whiteNoiseGain).toFixed(3))
         {
             this.whiteNoiseGain.gain.cancelScheduledValues(0);
-            this.whiteNoiseGain.gain.linearRampToValueAtTime(whiteNoiseGain, now);
+            this.whiteNoiseGain.gain.linearRampToValueAtTime(this.track.analogSynthParams.whiteNoiseGain, now);
         }
 
         this.grooveBox.sendEvent({ 'lcdLine4': { key: 'NOISE GAIN:', value: (whiteNoiseGain * 10).toFixed(2) } });
     }
 
-    setPan ()
+    setPan (value: number)
     {
+        this.track.pan = (value - 63) / 127;
+
         const now = this.getCurrentTime();
         const { pan } = this.track;
 
         this.pan.pan.setValueAtTime(pan, now);
 
-        this.grooveBox.sendEvent({ 'lcdLine4': { key: 'PAN:', value: this.pan.pan.value.toFixed(2) } });
+        this.grooveBox.sendEvent({ 'lcdLine4': { key: 'PAN:', value: (this.pan.pan.value * 25).toFixed(0) } });
     }
 
     public seqNoteOn (time: number, currentBeatNote: Note)
@@ -410,7 +415,17 @@ export default class MonoSynth
         const { level, analogSynthParams, env } = this.track;
         const { vco } = analogSynthParams;
 
-        const freq = NOTES_FREQS[currentBeatNote.octave][currentBeatNote.name];
+        let freq
+
+        try
+        {
+            freq = NOTES_FREQS[currentBeatNote.octave][currentBeatNote.name];
+        }
+        catch (error)
+        {
+            return;
+        }
+
 
         if (!freq)
         {
@@ -425,7 +440,7 @@ export default class MonoSynth
         this.vco2.frequency.cancelScheduledValues(0);
         this.vco2.frequency.linearRampToValueAtTime(freq + vco.vco2detune, time)
 
-        
+
         // attack
         this.output.gain.cancelScheduledValues(0);
         this.output.gain.linearRampToValueAtTime(level, time + env.a);
@@ -458,7 +473,17 @@ export default class MonoSynth
         const { level, analogSynthParams, env } = this.track;
         const { vco } = analogSynthParams;
 
-        const freq = NOTES_FREQS[note.octave][note.name];
+        let freq
+
+        try
+        {
+            freq = NOTES_FREQS[note.octave][note.name];
+        }
+        catch (error)
+        {
+            return;
+        }
+
 
         this.vco1.frequency.cancelScheduledValues(0);
         this.vco1.frequency.linearRampToValueAtTime(freq, now);

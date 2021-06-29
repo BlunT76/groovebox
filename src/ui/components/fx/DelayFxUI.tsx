@@ -30,7 +30,7 @@ export default class DelayFxUI extends Component<ExpandableProps, ExpandableStat
         const { delay } = this.props;
         delay.delayTime = value / 127;
         this.props.func(delay);
-
+        
         this.props.grooveBox.sendEvent({ 'lcdLine4': { key: 'DELAY TIME:', value: (delay.delayTime * 1000).toFixed(2) + ' ms' } });
     }
 
@@ -48,6 +48,8 @@ export default class DelayFxUI extends Component<ExpandableProps, ExpandableStat
         const { delay } = this.props;
 
         delay.on = !delay.on;
+
+        
 
         this.props.func(delay);
     }

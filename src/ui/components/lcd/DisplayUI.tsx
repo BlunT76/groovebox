@@ -1,10 +1,6 @@
 import { h, Component } from "preact";
 import GrooveBox from "../../../audio/GrooveBox";
 import Song from "../../../data/Song";
-import KnobUI from "../utils/KnobUI";
-import PresetUI from "../tracks/PresetUI";
-import { readDir } from "@tauri-apps/api/fs";
-import value from "*.xml";
 
 type ExpandableProps = {
     song: Song;

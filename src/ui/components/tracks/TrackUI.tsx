@@ -49,11 +49,11 @@ export default class TrackUI extends Component<ExpandableProps, ExpandableState>
 
         if (track.id < 8)
         {
-            grooveBox.drumTracks[track.id].setPan();
+            grooveBox.drumTracks[track.id].setPan(value);
         }
         if (track.id > 7)
         {
-            grooveBox.synthTracks[track.id - 8].setPan();
+            grooveBox.synthTracks[track.id - 8].setPan(value);
         }
     }
 

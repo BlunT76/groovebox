@@ -23,9 +23,7 @@ export default class NoiseUI extends Component<ExpandableProps, ExpandableState>
 
     setLevel (value: number)
     {
-        let { whiteNoiseGain } = this.props;
-        whiteNoiseGain = value / 127 / 10;
-        this.props.setWhiteNoiseGain(whiteNoiseGain);
+        this.props.setWhiteNoiseGain(value);
     }
 
     render ()
