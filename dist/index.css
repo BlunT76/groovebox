@@ -1,0 +1,168 @@
+@font-face {
+    font-family: 'lcd';
+    src: local('lcd'), url(./poxel-font.ttf) format('truetype');
+  }
+
+  .lcd{
+      font-family: 'lcd';
+      font-size: 16px;
+  }
+
+:root {
+    --BLACK : #000000;
+    --STEEL_GRAY : #222034;
+    --LIVID_BROWN : #45283c;
+    --BUCCANEER : #663931;
+    --POTTERS_CLAY : #8f563b;
+    --HOT_CINNAMON : #df7126; /* primary */
+    --DI_SERRIA : #d9a066;
+    --CHALKY : #eec39a;
+    --GOLDEN_FIZZ : #fbf236;
+    --CONIFER : #99e550;
+    --ATLANTIS : #6abe30;
+    --OCEAN_GREEN : #37946e; /* live */
+    --CHALET_GREEN : #4b692f;
+    --WOODLAND : #524b24;
+    --CAPE_CODE : #323c39;
+    --EAST_BAY : #3f3f74; /* track */
+    --CALYPSO : #306082;
+    --ROYAL_BLUE : #5b6ee1; /* bar */
+    --MALIBU : #639bff;
+    --TURQUOISE_BLUE : #5fcde4; /* note */
+    --HAWKES_BLUE : #cbdbfc; /* inactive */
+    --WHITE : #ffffff;
+    --GULL_GRAY : #9badb7;
+    --MOBSTER : #847e87;
+    --CORDUROY : #696a6a;
+    --CHICAGO : #595652;
+    --AFFAIR : #76428a; /* pattern */
+    --WELL_READ : #ac3232; /* step mode */
+    --ROMAN : #d95763;
+    --HOPBUSH : #d77bba;
+    --SYCAMORE : #8f974a;
+    --PESTO : #8a6f30;
+}
+
+html, body {
+	height: 768px;
+	width: 1024px;
+    padding: 0px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* padding: 0%; */
+	margin: 0;
+    background-color: var(--CHICAGO);
+	font-family: 'Helvetica Neue', arial, sans-serif;
+	font-weight: 400;
+    color: var(--HOT_CINNAMON);
+	-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none
+}
+
+p {
+    margin: 0;
+    padding: -2px;
+    font-size: 12px;
+    user-select: none
+}
+
+svg{
+    z-index: 5;
+    
+}
+
+.svgKnob {
+    margin-top: 0px;
+}
+
+body{
+    background-color: var(--STEEL_GRAY);
+    border: 3px solid var(--HOT_CINNAMON);
+    border-radius: 6px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+button{
+    margin: 2px;
+    border-radius: 6px;
+}
+
+button:active{
+    background-color: var(--DI_SERRIA)!important;
+}
+
+h4{
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+span{
+    font-size: 12px;
+    user-select: none
+}
+
+label{
+    font-size: 12px;
+    user-select: none
+}
+
+.btnActive{
+    background-color: var(--TURQUOISE_BLUE) !important;
+}
+
+.btnInactive{
+    background-color: var(--HAWKES_BLUE) !important;
+}
+
+.tickActive{
+    border: 3px solid var(--HOT_CINNAMON) !important;
+    border-radius: 6px;
+}
+
+.tickInactive{
+    border: 3px solid var(--MALIBU)!important;
+    border-radius: 6px;
+}
+
+.btnShiftActive{
+    background-color: var(--DI_SERRIA)!important;
+}
+
+.btnShiftInactive{
+    background-color: var(--HAWKES_BLUE)!important;
+}
+
+fieldset {
+    padding: 0;
+    margin: 0 0;
+    text-align: center;
+    font-size: 14px;
+    user-select: none
+}
+
+.btnPitchWaiting {
+    width: 50px;
+    height: 50px;
+    -webkit-animation: BlinkButtons 1s infinite;  /* Safari 4+ */
+    -moz-animation: BlinkButtons 1s infinite;  /* Fx 5+ */
+    -o-animation: BlinkButtons 1s infinite;  /* Opera 12+ */
+    animation: BlinkButtons 1s infinite;  /* IE 10+, Fx 29+ */
+  }
+  
+  @keyframes BlinkButtons {
+    0%, 49% {
+        background-color: var(--ROMAN);
+        border: 3px solid var(--MALIBU);
+        border-radius: 6px;
+    }
+    50%, 100% {
+        background-color: var(--HAWKES_BLUE);
+        border: 3px solid var(--MALIBU);
+        border-radius: 6px;
+    }
+  }
